@@ -65,17 +65,27 @@ function updateGraph() {
     const interestRate = Number(interestRateInput.value) * 0.01; // convert to a number, then convert to decimal
     const minMonthPay = Number(minMonthPayInput.value);
 
+    // before creating new data set decide where it goes (largest loan on bottom, smallest on top)
+    let index = debt.data.datasets.findIndex(ds => ds.data[0] < remainingAmmount);
+    if (index === -1) index = debt.data.datasets.length;
+
     //create dataset so all months can be added in loop
-    debt.data.datasets.push({
+    const newDataset = {
         label: loanName,
         data: [],
         backgroundColor: color[debt.data.datasets.length % color.length],
         borderColor: color[debt.data.datasets.length % color.length],
-        fill: debt.data.datasets.length === 0 ? 'origin' : '-1',
+    };
+    debt.data.datasets.splice(index, 0, newDataset);
+
+    // fill depends on position, so recompute for all
+    debt.data.datasets.forEach((ds, i) => {
+        ds.fill = i === 0 ? 'origin' : '-1';
     });
+
     // add data points till loan is 0
     while (remainingAmmount > 0) {
-        addData(debt, date.join('/'), remainingAmmount);
+        addData(debt, newDataset, date.join('/'), remainingAmmount);
 
         const prev = remainingAmmount;
         remainingAmmount = parseFloat(((remainingAmmount + (remainingAmmount * (interestRate / 12))) - minMonthPay).toFixed(2)); // loans take interest for the month befor user can pay (that's what I got from my research)
@@ -91,9 +101,8 @@ function updateGraph() {
             date[2] += 1
         }
     }
-    addData(debt, date.join('/'), 0) // add final month debt paid!
-    const ds = debt.data.datasets[debt.data.datasets.length - 1];
-    while (ds.data.length < debt.data.labels.length) ds.data.push(0);
+    addData(debt, newDataset, date.join('/'), 0) // add final month debt paid!
+    while (newDataset.data.length < debt.data.labels.length) newDataset.data.push(0);
     debt.update();
 
     // clear inputs
@@ -110,8 +119,7 @@ function updateGraph() {
 }
 
 // graphing helper functions:
-function addData(chart, month, newData) {
-    const ds = chart.data.datasets[chart.data.datasets.length - 1]; // newest loan
+function addData(chart, ds, month, newData) {
     const index = ds.data.length; // which month this point is
 
     if (index >= chart.data.labels.length) {
