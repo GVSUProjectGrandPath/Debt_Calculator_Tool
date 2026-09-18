@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rep4FinLit debt grapher</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="row">
+    <canvas id="debt" style="width:100%; max-width: 1200px;"></canvas>
+    <div class="input-group">
+        <input id="loan-name-input" class="inputs" placeholder="Loan Name">
+        <input id="remaining-ammount-input" class="inputs" placeholder="Remaining Ammount">
+        <input id="interest-rate-input" class="inputs" placeholder="Interest Rate (%)">
+        <input id="min-month-pay-input" class="inputs" placeholder="Minimum Monthly Payment">
+        <button id="add-loan-button">Add Loan</button>
+    </div>
+</div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0"></script>
+    <script src="main.js"></script>
+</body>
+</html>
