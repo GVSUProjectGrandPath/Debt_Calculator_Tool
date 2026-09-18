@@ -7,9 +7,10 @@ const interestRateInput = document.getElementById('interest-rate-input')
 const minMonthPayInput = document.getElementById('min-month-pay-input')
 // end VARIABLES
 
+// ======================
 // initialize empty graph
+// ======================
     const color = ['#0DC5EB', '#B41A8A', '#FF7D6D', '#FFD900', '#00B89C', '#663B19']; // values can be: rgb, hex or word values: 'blue'
-
     const debt = new Chart("debt", {
         type: "line",
             data: {
@@ -32,27 +33,20 @@ const minMonthPayInput = document.getElementById('min-month-pay-input')
     });
 // end initialize empty graph
 
+// ===============
 // get user's date
+// ===============
     var today = new Date();
     var dd = Number(today.getDate());
-    var mm = Number(today.getMonth() + 1); //January is 0!
+    var mm = Number(today.getMonth() + 1); //January is 0 so we add 1 so its 1 when displayed
     var yyyy = today.getFullYear();
     let date = [mm + 1, 1, yyyy]
     if (date[0] >= 13) {
         date[0] = 1
         date[2] += 1
     }
-    // console.log(today);
 // end get user's date
 
-// graph input logic
-    function inputsFilled() {
-        for (let i = 0; i < inputs.length; i++) {
-            if (!inputs[i].value) return false // if one input not filled don't try to update graph
-        }
-        return true // all inputs filled
-    }
-// end graph input logic
 document.getElementById('add-loan-button').addEventListener("click", updateGraph);
 function updateGraph() {
     if (!inputsFilled()) {
@@ -65,18 +59,16 @@ function updateGraph() {
     const interestRate = Number(interestRateInput.value) * 0.01; // convert to a number, then convert to decimal
     const minMonthPay = Number(minMonthPayInput.value);
 
-    // before creating new data set decide where it goes (largest loan on bottom, smallest on top)
-    let index = debt.data.datasets.findIndex(ds => ds.data[0] < remainingAmmount);
-    if (index === -1) index = debt.data.datasets.length;
-
     //create dataset so all months can be added in loop
     const newDataset = {
         label: loanName,
         data: [],
         backgroundColor: color[debt.data.datasets.length % color.length],
         borderColor: color[debt.data.datasets.length % color.length],
+        interestRate: interestRate,
+        totalInterest: 0
     };
-    debt.data.datasets.splice(index, 0, newDataset);
+    debt.data.datasets.push(newDataset);
 
     // fill depends on position, so recompute for all
     debt.data.datasets.forEach((ds, i) => {
@@ -141,3 +133,29 @@ function removeData(chart) {
     });
     chart.update();
 }
+
+// ================================
+// input type handling/empty values
+// ================================
+    function inputsFilled() {
+        for (let i = 0; i < inputs.length; i++) {
+            if (!inputs[i].value) {
+                alert("An input field is empty. Please fill ALL fields in order to graph your loan");
+                return false; // if one input not filled don't try to update graph
+            }
+        }
+        if (isNaN(Number(remainingAmmountInput.value))) {
+            alert("Remaining Ammount must only have numbers no letters or special characters");
+            return false;
+        }
+        if (isNaN(Number(interestRateInput.value))) {
+            alert("Interest Rate must only have numbers no letters or special characters");
+            return false;
+        }
+        if (isNaN(Number(minMonthPayInput.value))) {
+            alert("Minimum Monthly Payment must only have numbers no letters or special characters");
+            return false;
+        }
+        return true // all inputs filled
+    }
+// end graph input logic
