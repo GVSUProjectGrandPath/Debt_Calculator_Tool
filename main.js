@@ -7,10 +7,19 @@ const interestRateInput = document.getElementById('interest-rate-input')
 const minMonthPayInput = document.getElementById('min-month-pay-input')
 // end VARIABLES
 
+var slider = document.getElementById("myRange");
+var output = document.getElementById("demo");
+output.innerHTML = slider.value; // Display the default slider value
+
+// Update the current slider value (each time you drag the slider handle)
+slider.oninput = function() {
+  output.innerHTML = this.value;
+} 
+
 // ======================
 // initialize empty graph
 // ======================
-    const color = ['#0DC5EB', '#B41A8A', '#FF7D6D', '#FFD900', '#00B89C', '#663B19']; // values can be: rgb, hex or word values: 'blue'
+    const color = ['#B41A8A', '#0DC5EB', '#FFD900', '#FF7D6D', '#00B89C', '#663B19']; // values can be: rgb, hex or word values: 'blue'
     const debt = new Chart("debt", {
         type: "line",
             data: {
