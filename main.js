@@ -7,8 +7,8 @@ const interestRateInput = document.getElementById('interest-rate-input')
 const minMonthPayInput = document.getElementById('min-month-pay-input')
 // end VARIABLES
 
-var slider = document.getElementById("myRange");
-var output = document.getElementById("demo");
+const slider = document.getElementById("myRange");
+const output = document.getElementById("demo");
 output.innerHTML = slider.value; // Display the default slider value
 
 // Update the current slider value (each time you drag the slider handle)
@@ -36,7 +36,23 @@ slider.oninput = function() {
                 }
             },
             scales: {
-                y: { stacked: true }
+                y: { 
+                    stacked: true, 
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value;
+                        }
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return '$' + context.parsed.y.toLocaleString();
+                        }
+                    }
+                }
             }
         }
     });
@@ -84,6 +100,11 @@ function updateGraph() {
         ds.fill = i === 0 ? 'origin' : '-1';
     });
 
+    // update slider
+    slider.max = remainingAmmount;
+    slider.min = minMonthPay;
+    slider.value = minMonthPay;
+    
     // add data points till loan is 0
     while (remainingAmmount > 0) {
         addData(debt, newDataset, date.join('/'), remainingAmmount);
