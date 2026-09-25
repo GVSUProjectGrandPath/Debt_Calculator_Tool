@@ -11,14 +11,15 @@
     <canvas id="debt" style="width:100%; max-width: 1000px;"></canvas>
     <div class="input-group">
         <input id="loan-name-input" class="inputs" placeholder="Loan Name">
-        <input id="remaining-ammount-input" class="inputs" placeholder="Remaining Ammount">
+        <input id="remaining-ammount-input" class="inputs" placeholde:="Remaining Ammount">
         <input id="interest-rate-input" class="inputs" placeholder="Interest Rate (%)">
         <input id="min-month-pay-input" class="inputs" placeholder="Minimum Monthly Payment">
         <button id="add-loan-button">Add Loan</button>
         <div class="slidecontainer">
-          <input type="range" min="1" max="2" value="1" class="slider" id="myRange">
+          <input type="range" min="0" max="0" value="0" class="slider" id="myRange">
         </div>
         <div id="demo"></div>
+        <div id='test-output'>hello</div>
     </div>
 </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0"></script>

@@ -7,14 +7,27 @@ const interestRateInput = document.getElementById('interest-rate-input')
 const minMonthPayInput = document.getElementById('min-month-pay-input')
 // end VARIABLES
 
+// slider VARIABLES
+const testOutput = document.getElementById('test-output');
 const slider = document.getElementById("myRange");
 const output = document.getElementById("demo");
 output.innerHTML = slider.value; // Display the default slider value
+// end slider VARIABLES
+
+// loan paying methods (avalanche or snowball)
+let loanMethod = 'avalanche';
 
 // Update the current slider value (each time you drag the slider handle)
 slider.oninput = function() {
   output.innerHTML = this.value;
 } 
+
+slider.addEventListener('change', function() {
+  // trigger update all loans
+  if (loanMethod == 'avalanche') {
+    avalanche(this.value);
+  }
+});
 
 // ======================
 // initialize empty graph
@@ -22,38 +35,38 @@ slider.oninput = function() {
     const color = ['#B41A8A', '#0DC5EB', '#FFD900', '#FF7D6D', '#00B89C', '#663B19']; // values can be: rgb, hex or word values: 'blue'
     const debt = new Chart("debt", {
         type: "line",
-            data: {
-                labels: [],
-                datasets: [] // <-- add loans here
-            },
+        data: {
+          labels: [],
+          datasets: [] // <-- add loans here
+        },
         options: {
-            interaction: { mode: 'index', intersect: false },
-            elements: {
-                point: {
-                    radius: 0,
-                    hoverRadius: 5,
-                    hitRadius: 10
-                }
-            },
-            scales: {
-                y: { 
-                    stacked: true, 
-                    ticks: {
-                        callback: function(value) {
-                            return '$' + value;
-                        }
-                    }
-                }
-            },
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return '$' + context.parsed.y.toLocaleString();
-                        }
-                    }
-                }
+          interaction: { mode: 'index', intersect: false },
+          elements: {
+            point: {
+              radius: 0,
+              hoverRadius: 5,
+              hitRadius: 10
             }
+          },
+          scales: {
+            y: { 
+              stacked: true, 
+              ticks: {
+                callback: function(value) {
+                  return '$' + value;
+                }
+              }
+            }
+          },
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return '$' + context.parsed.y.toLocaleString();
+                }
+              }
+            }
+          }
         }
     });
 // end initialize empty graph
@@ -72,8 +85,8 @@ slider.oninput = function() {
     }
 // end get user's date
 
-document.getElementById('add-loan-button').addEventListener("click", updateGraph);
-function updateGraph() {
+document.getElementById('add-loan-button').addEventListener("click", createLoan);
+function createLoan() {
     if (!inputsFilled()) {
         console.log("not all inputs filled")
         return
@@ -86,12 +99,13 @@ function updateGraph() {
 
     //create dataset so all months can be added in loop
     const newDataset = {
-        label: loanName,
-        data: [],
-        backgroundColor: color[debt.data.datasets.length % color.length],
-        borderColor: color[debt.data.datasets.length % color.length],
-        interestRate: interestRate,
-        totalInterest: 0
+      label: loanName,
+      data: [],
+      backgroundColor: color[debt.data.datasets.length % color.length],
+      borderColor: color[debt.data.datasets.length % color.length],
+      interestRate: interestRate,
+      totalInterest: 0,
+      minMonthPay: minMonthPay
     };
     debt.data.datasets.push(newDataset);
 
@@ -101,10 +115,12 @@ function updateGraph() {
     });
 
     // update slider
-    slider.max = remainingAmmount;
-    slider.min = minMonthPay;
-    slider.value = minMonthPay;
-    
+    slider.max += remainingAmmount;
+    slider.value += minMonthPay;
+    slider.min += minMonthPay;
+    output.innterHTML = '';
+    output.innerHTML = Number(slider.value);
+
     // add data points till loan is 0
     while (remainingAmmount > 0) {
         addData(debt, newDataset, date.join('/'), remainingAmmount);
@@ -189,3 +205,16 @@ function removeData(chart) {
         return true // all inputs filled
     }
 // end graph input logic
+
+// ================================
+// Loan methods
+// ================================
+
+// avalanche
+function avalanche (monthPaymentAmmount) {
+  // 1. store all current loans into an array in the order of highest interest rate to lowest
+  let loans = [];
+  for (let i=0; i<=debt.data.datasets.length; i++) {
+    console.log(debt.data.datasets[i])
+  }
+}

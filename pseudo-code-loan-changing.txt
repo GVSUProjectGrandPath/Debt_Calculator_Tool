@@ -1,0 +1,10 @@
+pseudo code for updating graphs based on slider
+
+1. store all current loans into an array in the order of highest interest rate to lowest
+
+2. delete all loans from the graph
+
+3. graph the highest interest rate loan setting the minimum payment as slider value minus all the other loan min values
+  a. when not graphing the first loan graph the highest interest rate loan at its normal min loan payment until larger loan is paid off then swap to the slider value minus all other min loan values
+
+4. remove the highest loan from the datatype that was used to store the values
